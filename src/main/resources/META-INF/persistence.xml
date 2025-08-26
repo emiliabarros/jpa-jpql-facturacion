@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <persistence-unit name="example-unit" transaction-type="RESOURCE_LOCAL">
+        <!-- Entidades -->
+        <class>org.example.Articulo</class>
+        <class>org.example.ArticuloInsumo</class>
+        <class>org.example.ArticuloManufacturado</class>
+        <class>org.example.ArticuloManufacturadoDetalle</class>
+        <class>org.example.Imagen</class>
+        <class>org.example.UnidadMedida</class>
+        <class>org.example.Categoria</class>
+        <class>org.example.Cliente</class>
+        <class>org.example.Factura</class>
+        <class>org.example.FacturaDetalle</class>
+
+        <!-- Configuración de conexión y Hibernate -->
+        <properties>
+            <!-- MySQL JDBC -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/factura?useSSL=false&amp;serverTimezone=UTC"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value="rootpassword"/>
+
+            <!-- Hibernate -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
