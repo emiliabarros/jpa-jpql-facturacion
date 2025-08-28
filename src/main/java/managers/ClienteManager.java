@@ -4,13 +4,8 @@ import funciones.FuncionApp;
 import org.example.Cliente;
 import org.example.Factura;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.*;
+import java.util.*;
 
 public class ClienteManager {
     EntityManagerFactory emf = null;
@@ -27,6 +22,37 @@ public class ClienteManager {
         emf = Persistence.createEntityManagerFactory("example-unit", properties);
         em = emf.createEntityManager();
 
+    }
+
+    //Ejercicio 1
+    public List<Cliente> getClientes() {
+        Query query = em.createQuery(" FROM " + Cliente.class.getSimpleName());
+        List<Cliente> clientes = query.getResultList();
+        return clientes;
+    }
+
+    //Ejercicio 3
+    public Cliente getClienteConMasFacturas() {
+        String jpql = "SELECT f.cliente " +
+                "FROM Factura f " +
+                "GROUP BY f.cliente " +
+                "ORDER BY COUNT(f) DESC";
+        Cliente cliente = em.createQuery(jpql, Cliente.class)
+                .setMaxResults(1)
+                .getSingleResult();
+        return cliente;
+    }
+
+    //Ejercicio 6
+    public Double getMontoTotalFacturadoPorCliente(Long idCliente) {
+        String jpql = "SELECT SUM(f.total) " +
+                "FROM Factura f " +
+                "WHERE f.cliente.id = :idCliente";
+
+        TypedQuery<Double> query = em.createQuery(jpql, Double.class);
+        query.setParameter("idCliente", idCliente);
+        Double resultado = query.getSingleResult();
+        return resultado != null ? resultado : 0.0;
     }
 
     public List<Cliente> getClientesXIds(List<Long> idsClientes){

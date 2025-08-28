@@ -26,9 +26,152 @@ public class MainConsultasJPQL {
         //mostrarMaximoNroFactura();
         //buscarClientesXIds();
         //buscarClientesXRazonSocialParcial();
+
+//        imprimirClientes();
+//        facturasUltimoMes();
+//        clieteConMasF();
+//        ArticulosMasVendidos();
+//        facturasUltimos3Meses();
+//        totalPorCliente();
+//        articulosPorFactura();
+//        articuloMasCaro();
+        totalFacturas();
+
+    }
+//1
+    public static void imprimirClientes() {
+        ClienteManager mCliente= new ClienteManager(true);
+        try {
+            List<Cliente> clientes = mCliente.getClientes();
+            mostrarClientes(clientes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            mCliente.cerrarEntityManager();
+        }
+    }
+//2
+    public static void facturasUltimoMes(){
+        FacturaManager mFactura= new FacturaManager(true);
+        try {
+            List<Factura> facturas = mFactura.getFacturasUltimoMes();
+            mostrarFacturas(facturas);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            mFactura.cerrarEntityManager();
+        }
+    }
+//3
+    public static void clieteConMasF(){
+        ClienteManager mCliente= new ClienteManager(true);
+        try {
+            Cliente cliente = mCliente.getClienteConMasFacturas();
+            mostrarClientes(cliente);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            mCliente.cerrarEntityManager();
+        }
+    }
+//4
+    public static void ArticulosMasVendidos(){
+        FacturaManager mFactura= new FacturaManager(true);
+        try {
+            List<Object[]> articulos = mFactura.getArticulosMasVendidos();
+            System.out.println("Filas obtenidas: " + articulos.size());
+            for (Object[] fila : articulos) {
+                Articulo articulo = (Articulo) fila[0];    // El artículo
+                Number totalVendidoNum = (Number) fila[1];        // La cantidad total vendida
+                System.out.println("Artículo: " + articulo.getDenominacion());
+                System.out.println("Total vendido: " + totalVendidoNum);
+                System.out.println("----------------------------");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            mFactura.cerrarEntityManager();
+        }
+    }
+//5
+    public static void facturasUltimos3Meses(){
+        FacturaManager mFactura= new FacturaManager(true);
+        try {
+            List<Factura> facturas = mFactura.getFacturasUltimosTresMeses(1);
+            mostrarFacturas(facturas);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            mFactura.cerrarEntityManager();
+        }
+    }
+
+//6
+    public static void totalPorCliente(){
+        System.out.println("Ejecutando consulta...");
+        ClienteManager mCliente= new ClienteManager(true);
+        try {
+            Long idCliente = 1L;
+            Double totalFacturado = mCliente.getMontoTotalFacturadoPorCliente(idCliente);
+            System.out.println("Monto total facturado por el cliente " + idCliente + ": " + totalFacturado);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            mCliente.cerrarEntityManager();
+        }
+    }
+//7
+    public static void articulosPorFactura(){
+        FacturaManager mFactura= new FacturaManager(true);
+        try {
+            Long idFactura = 1L;
+            List<Articulo> articulos = mFactura.getArticulosDeFactura(idFactura);
+            System.out.println("Articulos de la factura " + idFactura + ":");
+            for (Articulo a : articulos) {
+                System.out.println("- " + a.getDenominacion());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            mFactura.cerrarEntityManager();
+        }
+    }
+//8
+    public static void articuloMasCaro(){
+        FacturaManager mFactura= new FacturaManager(true);
+        try {
+            Long idFactura = 1L;
+            Articulo articulo = mFactura.getArticuloMasCaroDeFactura(idFactura);
+            System.out.println("Articulo mas caro de la factura " + idFactura + ":");
+            System.out.println(articulo.getDenominacion() + " - Precio: $" + articulo.getPrecioVenta());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            mFactura.cerrarEntityManager();
+        }
+    }
+//9
+    public static void totalFacturas(){
+        FacturaManager mFactura= new FacturaManager(true);
+        try {
+            Long total = mFactura.getCantidadTotalFacturas();
+            System.out.println("Cantidad total de facturas generadas: " + total);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            mFactura.cerrarEntityManager();
+        }
     }
 
 
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////
     public static void buscarFacturas(){
         FacturaManager mFactura = new FacturaManager(true);
         try {
@@ -203,5 +346,23 @@ public class MainConsultasJPQL {
             System.out.println("*************************");
         }
     }
+
+    public static void mostrarClientes(Cliente cliente){
+        List<Cliente> clientes = new ArrayList<>();
+        clientes.add(cliente);
+        mostrarClientes(clientes);
+    }
+
+
+    public static void mostrarClientes(List<Cliente> clientes){
+        for(Cliente cli : clientes){
+            System.out.println("Id: " + cli.getId());
+            System.out.println("CUIT: " + cli.getCuit());
+            System.out.println("Razon Social: " + cli.getRazonSocial());
+
+        }
+    }
+
+
 
 }

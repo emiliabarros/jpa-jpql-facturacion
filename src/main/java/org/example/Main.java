@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 public class Main {
@@ -53,7 +54,7 @@ public class Main {
 
             // Crear una nueva entidad ArticuloInsumo en estado "nueva"
             ArticuloInsumo articuloInsumo = ArticuloInsumo.builder()
-                    .denominacion("Manzana").codigo(Long.toString(new Date().getTime()))
+                    .denominacion("Manzana").codigo(UUID.randomUUID().toString())
                     .precioCompra(1.5)
                     .precioVenta(5d)
                     .stockActual(100)
@@ -64,7 +65,7 @@ public class Main {
 
 
             ArticuloInsumo articuloInsumoPera = ArticuloInsumo.builder()
-                    .denominacion("Pera").codigo(Long.toString(new Date().getTime()))
+                    .denominacion("Pera").codigo(UUID.randomUUID().toString())
                     .precioCompra(2.5)
                     .precioVenta(10d)
                     .stockActual(130)

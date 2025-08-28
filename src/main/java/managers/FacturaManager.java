@@ -1,15 +1,11 @@
 package managers;
 
+import org.example.Articulo;
 import org.example.Factura;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
+import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FacturaManager {
     EntityManagerFactory emf = null;
@@ -27,6 +23,82 @@ public class FacturaManager {
         em = emf.createEntityManager();
 
     }
+
+    //Ejercicio 2
+    public List<Factura> getFacturasUltimoMes() {
+        // Calculamos la fecha hace un mes a partir de hoy
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        Date fechaHaceUnMes = cal.getTime();
+
+        String jpql = "FROM Factura f WHERE f.fechaAlta >= :fechaLimite";
+        Query query = em.createQuery(jpql);
+        query.setParameter("fechaLimite", fechaHaceUnMes);
+        List<Factura> facturas = query.getResultList();
+        return facturas;
+    }
+
+    //Ejercicio 4
+    public List<Object[]> getArticulosMasVendidos(){
+        String jpql = "SELECT fd.articulo, SUM(fd.cantidad) AS totalVendido " +
+                "FROM FacturaDetalle fd " +
+                "GROUP BY fd.articulo " +
+                "ORDER BY totalVendido DESC";
+        TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+        List<Object[]> articulos = query.getResultList();
+        return articulos;
+    }
+    //Ejercicio 5
+    public List<Factura> getFacturasUltimosTresMeses(int idCliente){
+        // Calculamos la fecha de hace 3 meses
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -3);
+        Date fechaLimite = cal.getTime();
+        String jpql = "FROM Factura f " +
+                "WHERE f.cliente.id = :idCliente " +
+                "AND f.fechaAlta >= :fechaLimite";
+        Query query = em.createQuery(jpql);
+        query.setParameter("idCliente", Long.valueOf(idCliente));
+        query.setParameter("fechaLimite", fechaLimite);
+        return query.getResultList();
+    }
+    //Ejercicio 7
+    public List<Articulo> getArticulosDeFactura(Long idFactura) {
+        String jpql = "SELECT fd.articulo " +
+                "FROM FacturaDetalle fd " +
+                "WHERE fd.factura.id = :idFactura";
+
+        TypedQuery<Articulo> query = em.createQuery(jpql, Articulo.class);
+        query.setParameter("idFactura", idFactura);
+
+        return query.getResultList();
+    }
+    //Ejercicio 8
+    public Articulo getArticuloMasCaroDeFactura(Long idFactura) {
+        String jpql = "SELECT fd.articulo " +
+                "FROM FacturaDetalle fd " +
+                "WHERE fd.factura.id = :idFactura " +
+                "ORDER BY fd.articulo.precioVenta DESC";
+
+        TypedQuery<Articulo> query = em.createQuery(jpql, Articulo.class);
+        query.setParameter("idFactura", idFactura);
+        query.setMaxResults(1); // solo el más caro
+
+        return query.getSingleResult();
+    }
+    //Ejercicio 9
+    public Long getCantidadTotalFacturas() {
+        String jpql = "SELECT COUNT(f) FROM Factura f";
+        TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+        return query.getSingleResult();
+    }
+
+
+
+
+
+
+
 
     public List<Factura> getFacturas(){
         String jpql = "SELECT f FROM Factura f";
